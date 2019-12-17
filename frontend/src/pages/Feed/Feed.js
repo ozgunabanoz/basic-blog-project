@@ -67,8 +67,6 @@ class Feed extends Component {
         `${process.env.REACT_APP_BACKEND_URL}/feed/posts`
       );
 
-      console.log(res);
-
       if (res.status !== 200) {
         throw new Error('Failed to fetch posts.');
       }
@@ -132,7 +130,8 @@ class Feed extends Component {
       editLoading: true
     });
 
-    let url = 'URL';
+    let url = `${process.env.REACT_APP_BACKEND_URL}/feed/post`;
+    let method = 'POST';
 
     if (this.state.editPost) {
       url = 'URL';
@@ -142,7 +141,14 @@ class Feed extends Component {
     let resData;
 
     try {
-      res = await fetch(url);
+      res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: postData.title,
+          content: postData.content
+        })
+      });
 
       if (res.status !== 200 && res.status !== 201) {
         throw new Error('Creating or editing a post failed!');
