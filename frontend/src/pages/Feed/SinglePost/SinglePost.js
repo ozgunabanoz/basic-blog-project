@@ -18,7 +18,9 @@ class SinglePost extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/feed/post/${postId}`
+      );
 
       if (res.status !== 200) {
         throw new Error('Failed to fetch status');
@@ -29,6 +31,9 @@ class SinglePost extends Component {
       this.setState({
         title: resData.post.title,
         author: resData.post.creator.name,
+        image: `${process.env.REACT_APP_BACKEND_URL}/${
+          resData.post.imageUrl
+        }`,
         date: new Date(resData.post.createdAt).toLocaleDateString(
           'en-US'
         ),
