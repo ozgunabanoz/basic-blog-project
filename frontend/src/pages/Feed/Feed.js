@@ -26,7 +26,10 @@ class Feed extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/status`,
+        { headers: { Authorization: `Bearer ${this.props.token}` } }
+      );
 
       if (res.status !== 200) {
         throw new Error('Failed to fetch user status.');
@@ -64,7 +67,10 @@ class Feed extends Component {
 
     try {
       res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/feed/posts?page=${page}`
+        `${
+          process.env.REACT_APP_BACKEND_URL
+        }/feed/posts?page=${page}`,
+        { headers: { Authorization: `Bearer ${this.props.token}` } }
       );
 
       if (res.status !== 200) {
@@ -95,7 +101,17 @@ class Feed extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/status`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: this.state.status })
+        }
+      );
 
       if (res.status !== 200 && res.status !== 201) {
         throw new Error("Can't update status!");
@@ -155,7 +171,8 @@ class Feed extends Component {
     try {
       res = await fetch(url, {
         method,
-        body: formData
+        body: formData,
+        headers: { Authorization: `Bearer ${this.props.token}` }
       });
 
       if (res.status !== 200 && res.status !== 201) {
@@ -215,7 +232,10 @@ class Feed extends Component {
     try {
       res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/feed/post/${postId}`,
-        { method: 'DELETE' }
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${this.props.token}` }
+        }
       );
 
       if (res.status !== 200 && res.status !== 201) {

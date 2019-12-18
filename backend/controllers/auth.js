@@ -75,13 +75,60 @@ exports.login = async (req, res, next) => {
       { expiresIn: '1h' }
     );
 
-    res
-      .status(200)
-      .json({
-        message: 'User logged in.',
-        userId: user._id.toString(),
-        token
-      });
+    res.status(200).json({
+      message: 'User logged in.',
+      userId: user._id.toString(),
+      token
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  }
+};
+
+exports.getUserStatus = async (req, res, next) => {
+  let user;
+  try {
+    user = await User.findById(req.userId);
+
+    if (!user) {
+      const error = new Error('No user found.');
+      error.statusCode = 404;
+
+      throw error;
+    }
+
+    res.status(200).json({ status: user.status });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  }
+};
+
+exports.updateUserStatus = async (req, res, next) => {
+  const newStatus = req.body.status;
+  let user;
+
+  try {
+    user = await User.findById(req.userId);
+
+    if (!user) {
+      const error = new Error('No user found.');
+      error.statusCode = 404;
+
+      throw error;
+    }
+
+    user.status = newStatus;
+
+    await user.save();
+    res.status(200).json({ message: 'User status updated.' });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

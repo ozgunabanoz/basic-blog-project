@@ -19,7 +19,8 @@ class SinglePost extends Component {
 
     try {
       res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/feed/post/${postId}`
+        `${process.env.REACT_APP_BACKEND_URL}/feed/post/${postId}`,
+        { headers: { Authorization: `Bearer ${this.props.token}` } }
       );
 
       if (res.status !== 200) {
