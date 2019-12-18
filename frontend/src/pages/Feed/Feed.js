@@ -74,7 +74,12 @@ class Feed extends Component {
       resData = await res.json();
 
       this.setState({
-        posts: resData.posts,
+        posts: resData.posts.map(p => {
+          return {
+            ...p,
+            imagePath: p.imageUrl
+          };
+        }),
         totalPosts: resData.totalItems,
         postsLoading: false
       });
@@ -138,7 +143,10 @@ class Feed extends Component {
     let method = 'POST';
 
     if (this.state.editPost) {
-      url = 'URL';
+      url = `${process.env.REACT_APP_BACKEND_URL}/feed/post/${
+        this.state.editPost._id
+      }`;
+      method = 'PUT';
     }
 
     let res;
