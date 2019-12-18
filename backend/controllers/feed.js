@@ -6,10 +6,16 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 
 exports.getPosts = async (req, res, next) => {
+  const currentPage = req.query.page || 1;
+  const perPage = 2;
+  let totalItems;
   let posts;
 
   try {
-    posts = await Post.find();
+    totalItems = await Post.countDocuments();
+    posts = await Post.find()
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
 
     if (!posts) {
       const error = new Error('Could not find any post');
@@ -18,7 +24,9 @@ exports.getPosts = async (req, res, next) => {
       throw error;
     }
 
-    res.status(200).json({ posts });
+    res
+      .status(200)
+      .json({ message: 'Posts gathered.', posts, totalItems });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -142,7 +150,33 @@ exports.updatePost = async (req, res, next) => {
 
     result = await post.save();
 
-    res.status(200).json({ post: result });
+    res.status(200).json({ message: 'Post updated.', post: result });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+
+    next(err);
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  const { postId } = req.params;
+  let post;
+
+  try {
+    post = await Post.findById(postId);
+
+    if (!post) {
+      const error = new Error('No post found.');
+      error.statusCode = 422;
+
+      throw error;
+    }
+
+    clearImage(post.imageUrl);
+    await Post.findByIdAndRemove(postId);
+    res.status(200).json({ message: 'Post deleted.' });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

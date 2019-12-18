@@ -64,7 +64,7 @@ class Feed extends Component {
 
     try {
       res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/feed/posts`
+        `${process.env.REACT_APP_BACKEND_URL}/feed/posts?page=${page}`
       );
 
       if (res.status !== 200) {
@@ -213,7 +213,10 @@ class Feed extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/feed/post/${postId}`,
+        { method: 'DELETE' }
+      );
 
       if (res.status !== 200 && res.status !== 201) {
         throw new Error('Deleting a post failed!');
