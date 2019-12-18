@@ -22,7 +22,7 @@ class App extends Component {
   state = {
     showBackdrop: false,
     showMobileNav: false,
-    isAuth: true,
+    isAuth: false,
     token: null,
     userId: null,
     authLoading: false,
@@ -126,7 +126,18 @@ class App extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: authData.signupForm.email.value,
+            password: authData.signupForm.password.value,
+            name: authData.signupForm.name.value
+          })
+        }
+      );
 
       if (res.status === 422) {
         throw new Error(
