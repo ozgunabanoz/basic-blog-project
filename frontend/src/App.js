@@ -77,7 +77,17 @@ class App extends Component {
     let resData;
 
     try {
-      res = await fetch('URL');
+      res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: authData.email,
+            password: authData.password
+          })
+        }
+      );
 
       if (res.status === 422) {
         throw new Error('Validation failed.');
